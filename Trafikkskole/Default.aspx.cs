@@ -58,7 +58,7 @@ namespace Trafikkskole
 
                 foreach (QuestionsAndAnswers questionsAndAnswersObject in _questionsAndAnswersList)
                 {
-
+                    
                     if (questionsAndAnswersObject.QuestionsId == _questionNumber)
                     {
                             QuestionLabel.Text = questionsAndAnswersObject.Question;
@@ -79,7 +79,7 @@ namespace Trafikkskole
         {
             _myconnectionstring =
                 "Database=trafikkskole; Data Source = localhost; User = trafikkskole; Password = trafikkskole";
-            _sql = "Select * from questionsAndAnswers";
+            _sql = "Select * from questionsAndAnswers order by rand(123)"; //Randomize query
 
             try
             {
@@ -97,7 +97,7 @@ namespace Trafikkskole
                         while (reader.Read())
                         {
                             QuestionsAndAnswers qr = new QuestionsAndAnswers();
-                            qr.QuestionsId = (int) reader[0];
+                            qr.QuestionsId = _numRows+1; // Create new ids after random query
                             qr.Question = (string) reader[1];
                             qr.AnswerAlt1 = (string) reader[2];
                             qr.AnswerAlt2 = (string) reader[3];
@@ -110,10 +110,10 @@ namespace Trafikkskole
                             qr.MultipleChoice = (int) reader[10];
                             qr.IsUrl = (int) reader[11];
                             qr.Url = (string) reader[12];
-                            _questionsAndAnswersList.Add(qr);
+                           _questionsAndAnswersList.Add(qr);
                             _numRows++;
                         }
-
+                        
                     }
                     else
                     {
@@ -209,7 +209,7 @@ namespace Trafikkskole
                         ScoreLabel.Visible = true;
                         ScoreLabel.Text = _score.ToString();
                     }
-                    if ((R3.Checked || C3.Checked) && questionsAndAnswersObject.IsCorrectAlt4 == 1)
+                    if ((R4.Checked || C4.Checked) && questionsAndAnswersObject.IsCorrectAlt4 == 1)
                     {
                         _score++;
                         Session["score"] = _score;
@@ -223,7 +223,6 @@ namespace Trafikkskole
                 {
                     Button1.Text = "Siste spørsmål! Se resultat :)";
                 }
-
 
             }
             //End foreach
