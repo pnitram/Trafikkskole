@@ -54,6 +54,7 @@ namespace Trafikkskole
                             Session["admin"] = "isAdmin";
                         
                         Session["email"] = dr["email"].ToString();
+                        Session["firstName"] = dr["firstName"].ToString();
                         Response.Redirect("Default.aspx");
                     }
                     
