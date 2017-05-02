@@ -12,7 +12,7 @@ namespace Trafikkskole
     {
 
         QuestionsAndAnswers _questionsAndAnswers = new QuestionsAndAnswers();
-        List<QuestionsAndAnswers> _questionsAndAnswersList = new List<QuestionsAndAnswers>();
+        readonly List<QuestionsAndAnswers> _questionsAndAnswersList = new List<QuestionsAndAnswers>();
 
         private string _myconnectionstring;
         private string _sql;
@@ -20,24 +20,26 @@ namespace Trafikkskole
         private int _questionNumber;
         private int _score;
 
-
+        //Start Page_Load
         protected void Page_Load(object sender, EventArgs e)
         {
-//            Session["email"] = "martin.pedersen@me.com";
-//            Session["firstNAme"] = "Martin";
+            Session["email"] = "martin.pedersen@me.com";
+            Session["firstNAme"] = "Martin";
+            _questionNumber = 0;
 
             if (Session["email"] == null)
             {
                 Response.Redirect("Login.aspx");
             }
 
-        
             else
             {
                 if (!Page.IsPostBack)
                 {
                     _questionNumber = 1;
                     Session["questionNumber"] = _questionNumber;
+                    _score = 0;
+                    Session["score"] = _score;
                     QuestionLabel.Visible = false;
                     AnswerAlt1.Visible = false;
                     AnswerAlt2.Visible = false;
@@ -47,19 +49,36 @@ namespace Trafikkskole
                     R2.Visible = false;
                     R3.Visible = false;
                     R4.Visible = false;
-
                 }
 
                 QuestionsFromDatabaseToList();
                 Label1.Text = Session["firstName"].ToString();
-                
+                _questionNumber = (int) Session["questionNumber"];
+                _score = (int) Session["score"];
+
+                foreach (QuestionsAndAnswers questionsAndAnswersObject in _questionsAndAnswersList)
+                {
+
+                    if (questionsAndAnswersObject.QuestionsId == _questionNumber)
+                    {
+                            QuestionLabel.Text = questionsAndAnswersObject.Question;
+                            AnswerAlt1.Text = questionsAndAnswersObject.AnswerAlt1;
+                            AnswerAlt2.Text = questionsAndAnswersObject.AnswerAlt2;
+                            AnswerAlt3.Text = questionsAndAnswersObject.AnswerAlt3;
+                            AnswerAlt4.Text = questionsAndAnswersObject.AnswerAlt4;
+
+                    }
+                }
 
             }
         }
+        //End Page_Load
 
+        //Method to fill list with questions and answers objects from database
         private void QuestionsFromDatabaseToList()
         {
-            _myconnectionstring = "Database=trafikkskole; Data Source = localhost; User = trafikkskole; Password = trafikkskole";
+            _myconnectionstring =
+                "Database=trafikkskole; Data Source = localhost; User = trafikkskole; Password = trafikkskole";
             _sql = "Select * from questionsAndAnswers";
 
             try
@@ -107,7 +126,6 @@ namespace Trafikkskole
             catch (Exception e)
             {
                 Console.WriteLine("Failed to get questions!");
-
             }
 
         }
@@ -115,71 +133,6 @@ namespace Trafikkskole
         protected void Button1_Click(object sender, EventArgs e)
         {
             Button1.Text = "Neste spørsmål";
-            _questionNumber = (int)Session["questionNumber"];
-
-            foreach (QuestionsAndAnswers questionsAndAnswersObject in _questionsAndAnswersList)
-            {
-
-                if (questionsAndAnswersObject.QuestionsId == _questionNumber)
-                {
-                    if (R1.Checked && questionsAndAnswersObject.IsCorrectAlt1 == 1)
-                    {
-                        _score++;
-                        ScoreLabel.Visible = true;
-                        ScoreLabel.Text = _score.ToString();
-                    }
-                    if (R2.Checked && questionsAndAnswersObject.IsCorrectAlt2 == 1)
-                    {
-                        _score++;
-                        ScoreLabel.Visible = true;
-                        ScoreLabel.Text = _score.ToString();
-                    }
-                    if (R3.Checked && questionsAndAnswersObject.IsCorrectAlt3 == 1)
-                    {
-                        _score++;
-                        ScoreLabel.Visible = true;
-                        ScoreLabel.Text = _score.ToString();
-                    }
-                    if (R4.Checked && questionsAndAnswersObject.IsCorrectAlt4 == 1)
-                    {
-                        _score++;
-                        ScoreLabel.Visible = true;
-                        ScoreLabel.Text = _score.ToString();
-                    }
-
-                }
-
-                if (questionsAndAnswersObject.QuestionsId == _questionNumber)
-                {
-                 
-                    QuestionLabel.Text = questionsAndAnswersObject.Question;
-                    AnswerAlt1.Text = questionsAndAnswersObject.AnswerAlt1;
-                    AnswerAlt2.Text = questionsAndAnswersObject.AnswerAlt2;
-                    AnswerAlt3.Text = questionsAndAnswersObject.AnswerAlt3;
-                    AnswerAlt4.Text = questionsAndAnswersObject.AnswerAlt4;
-                    
-                }
-
-
-                /*                      intQuestionID = objQuestion.intQuestionID;
-                                        strQuestionDescription = objQuestion.strQuestionDescription;
-                                        radioButton1.Text = objQuestion.strAnswer1Description;
-                                        radioButton2.Text = objQuestion.strAnswer2Description;
-                                        radioButton3.Text = objQuestion.strAnswer3Description;
-                                        intCorrectAnswerID = objQuestion.intCorrectAnswerID;
-                                        strCorrectAnswerDescription = objQuestion.strCorrectAnswerDescription;
-                                        Session["m_strAnswer1Description"] = objQuestion.strAnswer1Description;
-                                        Session["m_strAnswer2Description"] = objQuestion.strAnswer2Description;
-                                        Session["m_strAnswer3Description"] = objQuestion.strAnswer3Description;
-                                        Session["m_intCorrectAnswerID"] = intCorrectAnswerID;
-                                        Session["m_strQuestionDescription"] = strQuestionDescription;
-                                        Session["m_strCorrectAnswerDescription"] = strCorrectAnswerDescription;*/
-            }
-
-
-            _questionNumber++;
-            Session["questionNumber"] = _questionNumber;
-
             QuestionLabel.Visible = true;
             AnswerAlt1.Visible = true;
             AnswerAlt2.Visible = true;
@@ -189,19 +142,100 @@ namespace Trafikkskole
             R2.Visible = true;
             R3.Visible = true;
             R4.Visible = true;
+
+
+            //Foreach questionsAndAnswersObject in list
+            foreach (QuestionsAndAnswers questionsAndAnswersObject in _questionsAndAnswersList)
+            {
+                //To check if radio, checkbox or url
+                if (questionsAndAnswersObject.QuestionsId == _questionNumber)
+                {
+                    if (questionsAndAnswersObject.MultipleChoice == 1)
+                    {
+                        R1.Visible = false;
+                        R2.Visible = false;
+                        R3.Visible = false;
+                        R4.Visible = false;
+                        C1.Visible = true;
+                        C2.Visible = true;
+                        C3.Visible = true;
+                        C4.Visible = true;
+                    }
+                    if (questionsAndAnswersObject.MultipleChoice == 0)
+                    {
+                        R1.Visible = true;
+                        R2.Visible = true;
+                        R3.Visible = true;
+                        R4.Visible = true;
+                        C1.Visible = false;
+                        C2.Visible = false;
+                        C3.Visible = false;
+                        C4.Visible = false;
+                    }
+                    if (questionsAndAnswersObject.IsUrl == 1)
+                    {
+                        Image1.ImageUrl = questionsAndAnswersObject.Url;
+                        Image1.Visible = true;
+                    }
+
+                    if (questionsAndAnswersObject.IsUrl == 0)
+                    {
+                        Image1.Visible = false;
+                    }
+
+                }
+
+                //Test if answer is correct
+                if (questionsAndAnswersObject.QuestionsId == _questionNumber -1)
+                {
+                    if ((R1.Checked || C1.Checked) && questionsAndAnswersObject.IsCorrectAlt1 == 1)
+                    {
+                        _score++;
+                        Session["score"] = _score;
+                        ScoreLabel.Visible = true;
+                        ScoreLabel.Text = _score.ToString();
+                    }
+                    if ((R2.Checked || C2.Checked) && questionsAndAnswersObject.IsCorrectAlt2 == 1)
+                    {
+                        _score++;
+                        Session["score"] = _score;
+                        ScoreLabel.Visible = true;
+                        ScoreLabel.Text = _score.ToString();
+                    }
+                    if ((R3.Checked || C3.Checked) && questionsAndAnswersObject.IsCorrectAlt3 == 1)
+                    {
+                        _score++;
+                        Session["score"] = _score;
+                        ScoreLabel.Visible = true;
+                        ScoreLabel.Text = _score.ToString();
+                    }
+                    if ((R3.Checked || C3.Checked) && questionsAndAnswersObject.IsCorrectAlt4 == 1)
+                    {
+                        _score++;
+                        Session["score"] = _score;
+                        ScoreLabel.Visible = true;
+                        ScoreLabel.Text = _score.ToString();
+                    }
+                    
+                }
+
+                if (_questionNumber > 20)
+                {
+                    Button1.Text = "Siste spørsmål! Se resultat :)";
+                }
+
+
+            }
+            //End foreach
+
+            _questionNumber++;
+            Session["questionNumber"] = _questionNumber;
+
+            //First radio button selected by default 
             R1.Checked = true;
             R2.Checked = false;
             R3.Checked = false;
             R4.Checked = false;
-
-
-
-            if (_questionNumber>20)
-            {
-                Button1.Text = "Siste spørsmål! Se resultat :)";
-            }
-
-
         }
     }
 }

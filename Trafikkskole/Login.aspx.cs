@@ -51,8 +51,10 @@ namespace Trafikkskole
                         int x = (int)dr["isAdmin"];
 
                         if (x == 1)
+                        {
                             Session["admin"] = "isAdmin";
-                        
+                        }
+
                         Session["email"] = dr["email"].ToString();
                         Session["firstName"] = dr["firstName"].ToString();
                         Response.Redirect("Default.aspx");

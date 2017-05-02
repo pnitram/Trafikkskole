@@ -74,6 +74,7 @@ namespace Trafikkskole
                         cmd.CommandText = _sql;
                         cmd.ExecuteNonQuery();
                         Session["email"] = _epost;
+                        Session["firstName"] = _fornavn;
                         Response.Redirect("Default.aspx");
                     }
 
