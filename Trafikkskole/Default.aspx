@@ -13,16 +13,11 @@
         </div>
 
     <div class="row">
-        <div class="col-md-6 col-md-offset-3">
+        <div class="col-md-5 col-md-offset-1">
             <h2>Quiz!</h2>
             <p>
                 <asp:Label ID="QnrLabel" runat="server" Text="Label" Visible="False"></asp:Label>
                 <asp:Label ID="QuestionLabel" runat="server" Font-Bold="True"></asp:Label>
-            </p>
-            <p>
-                &nbsp;</p>
-            <p>
-                <asp:Image ID="Image1" runat="server" Visible="False" />
             </p>
             <br>
             <p>
@@ -45,10 +40,21 @@
                 <asp:RadioButton ID="R4" runat="server" GroupName="Quiz" Visible="False" />
                 <asp:CheckBox ID="C4" runat="server" Visible="False" />
             </p>
-            <p>
+            
+
+        </div>
+        <div class="col-md-6"> <p><asp:Image ID="Image1" runat="server" Visible="False" Height="300px" /></p> </div>
+    </div>
+    <div class="row">
+        <div class="col-md-5 col-md-offset-1">
+            
+                        <p>
                 <asp:Button ID="Button1" runat="server" OnClick="Button1_Click" Text="Start quiz" />
             </p>
+            
+
         </div>
+        
     </div>
 
 </asp:Content>

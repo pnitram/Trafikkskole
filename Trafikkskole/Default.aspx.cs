@@ -79,7 +79,7 @@ namespace Trafikkskole
         {
             _myconnectionstring =
                 "Database=trafikkskole; Data Source = localhost; User = trafikkskole; Password = trafikkskole";
-            _sql = "Select * from questionsAndAnswers order by rand(123)"; //Randomize query
+            _sql = "SELECT * FROM questionsAndAnswers ORDER BY rand(123)"; //Randomize query
 
             try
             {
