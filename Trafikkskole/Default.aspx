@@ -10,13 +10,17 @@
         <p>
             <asp:Label ID="ScoreLabel" runat="server"></asp:Label>
         </p>
+        <p>
+            <asp:PlaceHolder ID="PlaceHolder1" runat="server"></asp:PlaceHolder>
+        </p>
         </div>
 
     <div class="row">
         <div class="col-md-5 col-md-offset-1">
             <h2>Quiz!</h2>
             <p>
-                <asp:Label ID="QnrLabel" runat="server" Text="Label" Visible="False"></asp:Label>
+                <asp:Label ID="QnrLabel" runat="server"></asp:Label>
+                &nbsp;&nbsp;&nbsp;
                 <asp:Label ID="QuestionLabel" runat="server" Font-Bold="True"></asp:Label>
             </p>
             <br>

@@ -69,8 +69,8 @@ namespace Trafikkskole
             }
             catch (Exception exception)
             {
-                Console.WriteLine(exception);
-                
+                Label1.Text = "Ikke kontakt med database!";
+
             }
 
             
