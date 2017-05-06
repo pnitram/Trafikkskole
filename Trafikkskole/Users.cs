@@ -13,6 +13,7 @@ namespace Trafikkskole
         public string Email { get; set; }
         public int LastScore { get; set; }
         public int HighScore { get; set; }
+        public DateTime UpdateDate { get; set; }
 
     }
 }

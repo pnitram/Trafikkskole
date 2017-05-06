@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Web;
@@ -37,15 +38,17 @@ namespace Trafikkskole
             else if ((string) Session["admin"] == "isAdmin")
             {
                 UsersFromDatabaseToList();
-                GetHtmlForUserList();
+                AdminHtmlList();
             }
 
             else
             {
                 if (!Page.IsPostBack)
                 {
+                    
                     _questionsAndAnswersList.Clear();
                     QuestionsFromDatabaseToList();
+                    QuizHeadingLabel.Text = $"Denne trafikkquizen inneholder {_questionsAndAnswersList.Count} spørsmål. <br> Masse lykke til!";
                     _questionNumber = 1;
                     Session["questionNumber"] = _questionNumber;
                     _score = 0;
@@ -86,11 +89,21 @@ namespace Trafikkskole
             }
         }
 
-        private void GetHtmlForUserList()
+        private void AdminHtmlList()
         {
+            Label1.Visible = false;
+            QuizHeadingLabel.Visible = false;
+            Button1.Visible = false;
+            PlaceHolder1.Visible = true;
             StringBuilder html = new StringBuilder();
 
-            html.Append("<table border = '1'>");
+
+            html.Append("<div class='row'>");
+            html.Append("<div class='col-md-offset-1 col-md-10'>");
+            html.Append("<div class='container'>");
+            html.Append("<h2>Oversikt over brukere og poengsummen deres</h2>");
+            html.Append("<table class='table'>");
+            html.Append("<thead>");
             html.Append("<tr>");
             html.Append("<th>");
             html.Append("BrukerId");
@@ -110,7 +123,11 @@ namespace Trafikkskole
             html.Append("<th>");
             html.Append("Høyeste poengsum");
             html.Append("</th>");
+            html.Append("<th>");
+            html.Append("Sist oppdatert");
+            html.Append("</th>");
             html.Append("</tr>");
+            html.Append("</thead>");
 
 
             foreach (Users user in _userList)
@@ -134,10 +151,14 @@ namespace Trafikkskole
                 html.Append("<td>");
                 html.Append(user.HighScore);
                 html.Append("</td>");
+                html.Append("<td>");
+                html.Append(user.UpdateDate);
+                html.Append("</td>");
                 html.Append("</tr>");
             }
 
-
+            html.Append("</div>");
+            html.Append("</div>");
             html.Append("</table>");
             PlaceHolder1.Controls.Add(new Literal {Text = html.ToString()});
         }
@@ -209,7 +230,7 @@ namespace Trafikkskole
         {
             _myconnectionstring =
                 "Database=trafikkskole; Data Source = localhost; User = trafikkskole; Password = trafikkskole";
-            _sql = "SELECT userId, firstName, lastName, email, lastScore, highScore FROM users"; 
+            _sql = "SELECT userId, firstName, lastName, email, lastScore, highScore, updateDate FROM users"; 
 
             try
             {
@@ -233,6 +254,7 @@ namespace Trafikkskole
                             qr.Email = (string)reader[3];
                             qr.LastScore = (int)reader[4];
                             qr.HighScore = (int)reader[5];
+                            qr.UpdateDate = (DateTime)reader[6];
                             _userList.Add(qr);
                             _numRows++;
                         }
@@ -263,7 +285,7 @@ namespace Trafikkskole
                 Button1.Text = "Kunne ikke hente fra database!";
                 return;
             }
-
+            QuizHeadingLabel.Text = "Spørsmål";
             Button1.Text = "Neste spørsmål";
             QnrLabel.Text = $"{_questionNumber}/{_questionsAndAnswersList.Count}:";
             QuestionLabel.Visible = true;
@@ -324,44 +346,78 @@ namespace Trafikkskole
                     //Test if answer is correct
                     if (questionsAndAnswersObject.QuestionsId == _questionNumber - 1)
                     {
+                        if (questionsAndAnswersObject.MultipleChoice == 0)
+                        {
+                            C1.Checked = false;
+                            C2.Checked = false;
+                            C3.Checked = false;
+                            C4.Checked = false;
+
+                        }
+
+                        if (questionsAndAnswersObject.MultipleChoice == 1)
+                        {
+                            R1.Checked = false;
+                            R2.Checked = false;
+                            R3.Checked = false;
+                            R4.Checked = false;
+
+                        }
+
                         if ((R1.Checked || C1.Checked) && questionsAndAnswersObject.IsCorrectAlt1 == 1)
                         {
                             _score++;
                             Session["score"] = _score;
                             ScoreLabel.Visible = true;
-                            ScoreLabel.Text = _score.ToString();
+                            ScoreLabel.ForeColor = Color.Green;
+                            ScoreLabel.Text = "Riktig";
                         }
-                        if ((R2.Checked || C2.Checked) && questionsAndAnswersObject.IsCorrectAlt2 == 1)
+
+                        else if ((R2.Checked || C2.Checked) && questionsAndAnswersObject.IsCorrectAlt2 == 1)
                         {
                             _score++;
                             Session["score"] = _score;
                             ScoreLabel.Visible = true;
-                            ScoreLabel.Text = _score.ToString();
+                            ScoreLabel.ForeColor = Color.Green;
+                            ScoreLabel.Text = "Riktig";
                         }
-                        if ((R3.Checked || C3.Checked) && questionsAndAnswersObject.IsCorrectAlt3 == 1)
+                        
+                        else if ((R3.Checked || C3.Checked) && questionsAndAnswersObject.IsCorrectAlt3 == 1)
                         {
                             _score++;
                             Session["score"] = _score;
                             ScoreLabel.Visible = true;
-                            ScoreLabel.Text = _score.ToString();
+                            ScoreLabel.ForeColor = Color.Green;
+                            ScoreLabel.Text = "Riktig";
                         }
-                        if ((R4.Checked || C4.Checked) && questionsAndAnswersObject.IsCorrectAlt4 == 1)
+                       
+                        else if ((R4.Checked || C4.Checked) && questionsAndAnswersObject.IsCorrectAlt4 == 1)
                         {
                             _score++;
                             Session["score"] = _score;
                             ScoreLabel.Visible = true;
-                            ScoreLabel.Text = _score.ToString();
+                            ScoreLabel.ForeColor = Color.Green;
+                            ScoreLabel.Text = "Riktig";
+                        }
+                        else
+                        {
+                            ScoreLabel.ForeColor = Color.Red;
+                            ScoreLabel.Text = "Feil";
                         }
 
                     }
                     if (_questionNumber == _questionsAndAnswersList.Count)
                     {
                         Button1.Text = "Se resultat!";
+                        
+                       
+
                     }
 
                     if (_questionNumber > _questionsAndAnswersList.Count)
                     {
-
+                        Image1.Visible = false;
+                        QuizHeadingLabel.Text = "Resultat";
                         _myconnectionstring = "Database=trafikkskole; Data Source = localhost; User = trafikkskole; Password = trafikkskole";
                         _sql = $"SELECT highScore FROM users WHERE email=\'{Session["email"]}\'";
 
@@ -375,23 +431,18 @@ namespace Trafikkskole
                                 cmd.CommandText = _sql;
                                 int highScore = Convert.ToInt32(cmd.ExecuteScalar());
 
-                                if (highScore > _score)
+                                if (_score <= highScore)
                                 {
-                                    _sql = $"UPDATE users SET lastScore ={_score} WHERE email='{Session["email"]}'";
+                                    _sql = $"UPDATE users SET lastScore ={_score}, updateDate=NOW() WHERE email='{Session["email"]}'";
                                     cmd.CommandText = _sql;
                                     cmd.ExecuteNonQuery();
-                                    Response.Redirect("Default.aspx");
                                 }
-                                else if (highScore < _score)
+                                else if (_score > highScore)
                                 {
-                                    _sql = $"UPDATE users SET lastScore ={_score} WHERE email='{Session["email"]}'";
+                                    _sql = $"UPDATE users SET lastScore ={_score}, highScore ={_score}, updateDate=NOW() WHERE email='{Session["email"]}'";
                                     cmd.CommandText = _sql;
                                     cmd.ExecuteNonQuery();
-                                    _sql = $"UPDATE users SET highScore ={_score} WHERE email='{Session["email"]}'";
-                                    cmd.CommandText = _sql;
-                                    cmd.ExecuteNonQuery();
-                                    Response.Redirect("Default.aspx");
-                                }
+                                    }
 
 
                                 else
@@ -410,8 +461,8 @@ namespace Trafikkskole
                         }
 
                         Button1.Text = "Ikke fornøyd? Prøv igjen!";
-                            AnswerAlt1.Text = $"Du oppnådde {_score} poeng!";
-                            AnswerAlt1.Visible = true;
+                            QuizHeadingLabel.Text = $"Du oppnådde {_score} poeng!";
+                            AnswerAlt1.Visible = false;
                             AnswerAlt2.Visible = false;
                             AnswerAlt3.Visible = false;
                             AnswerAlt4.Visible = false;
@@ -444,10 +495,15 @@ namespace Trafikkskole
                 Session["questionNumber"] = _questionNumber;
 
                 //First radio button selected by default 
+                C1.Checked = false;
+                C2.Checked = false;
+                C3.Checked = false;
+                C4.Checked = false;
                 R1.Checked = true;
                 R2.Checked = false;
                 R3.Checked = false;
                 R4.Checked = false;
+                
         }
     }
 }

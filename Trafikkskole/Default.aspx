@@ -5,19 +5,17 @@
     <div class="jumbotron">
         <h2>Velkommen til trafikkskolequiz
             <asp:Label ID="Label1" runat="server"></asp:Label>!
-&nbsp;</h2>
-        <p>&nbsp;</p>
-        <p>
-            <asp:Label ID="ScoreLabel" runat="server"></asp:Label>
-        </p>
-        <p>
-            <asp:PlaceHolder ID="PlaceHolder1" runat="server"></asp:PlaceHolder>
-        </p>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <asp:Label ID="ScoreLabel" runat="server" CssClass="alert" Font-Size="Smaller"></asp:Label>
+        </h2>
         </div>
-
+    <asp:PlaceHolder ID="PlaceHolder1" runat="server" Visible="False"></asp:PlaceHolder>
     <div class="row">
         <div class="col-md-5 col-md-offset-1">
-            <h2>Quiz!</h2>
+            <h2>
+                <asp:Label ID="QuizHeadingLabel" runat="server" CssClass="h4" ForeColor="Black"></asp:Label>
+            </h2>
+
             <p>
                 <asp:Label ID="QnrLabel" runat="server"></asp:Label>
                 &nbsp;&nbsp;&nbsp;
@@ -53,7 +51,7 @@
         <div class="col-md-5 col-md-offset-1">
             
                         <p>
-                <asp:Button ID="Button1" runat="server" OnClick="Button1_Click" Text="Start quiz" />
+                <asp:Button ID="Button1" runat="server" OnClick="Button1_Click" Text="Start quiz" CssClass=" btn-primary" />
             </p>
             
 
