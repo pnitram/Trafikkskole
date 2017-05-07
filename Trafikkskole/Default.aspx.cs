@@ -196,12 +196,12 @@ namespace Trafikkskole
                             Session["score"] = _score;
                             ScoreLabel.Visible = true;
                             ScoreLabel.ForeColor = Color.Green;
-                            ScoreLabel.Text = "Riktig";
+                            ScoreLabel.Text = "Det var riktig!";
                         }
                         else
                         {
                             ScoreLabel.ForeColor = Color.Red;
-                            ScoreLabel.Text = "Feil";
+                            ScoreLabel.Text = "Det var feil!";
                         }
                     }
                     if (_questionNumber == _questionsAndAnswersList.Count)
