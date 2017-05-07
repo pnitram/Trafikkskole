@@ -38,7 +38,7 @@
 
                         <br />
                         <br />
-                        <asp:Button ID="Button1" runat="server" Text="Registrer og logg inn" CssClass="btn btn-primary" OnClick="Button1_Click" />
+                        <asp:Button ID="Button1" runat="server" Text="Registrer og logg inn" CssClass="btn-primary" OnClick="Button1_Click" />
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <asp:Label ID="Label1" runat="server" CssClass="alert-danger text-right"></asp:Label>
                         
