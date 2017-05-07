@@ -21,6 +21,7 @@ namespace Trafikkskole
         {
             // Determine current view
             var isMobile = WebFormsFriendlyUrlResolver.IsMobileView(new HttpContextWrapper(Context));
+
             CurrentView = isMobile ? "Mobile" : "Desktop";
 
             // Determine alternate view
