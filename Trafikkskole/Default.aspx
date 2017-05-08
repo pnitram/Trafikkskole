@@ -1,6 +1,43 @@
 ﻿<%@ Page Title="Home Page" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="Trafikkskole._Default" %>
 
+
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
+    
+    <script language="javascript" type="text/javascript" >
+        
+/*        function ClientValidate(source,args)
+        {   
+            if (document.getElementById("<%= R1.ClientID %>").checked || document.getElementById("<%= R2.ClientID %>").checked || document.getElementById("<%= R3.ClientID %>").checked || document.getElementById("<%= R4.ClientID %>").checked)
+            {
+                args.IsValid = true;
+            }
+            else
+            {
+                args.IsValid = false;
+            }
+
+        }*/
+    </script>
+    
+    <script>
+        function validateCheckbox(source, arguments) {
+            var $c1 = $('#<%= C1.ClientID %>');
+            var $c2 = $('#<%= C2.ClientID %>');
+            var $c3 = $('#<%= C3.ClientID %>');
+            var $c4 = $('#<%= C4.ClientID %>');
+            var $r1 = $('#<%= R1.ClientID %>');
+            var $r2 = $('#<%= R2.ClientID %>');
+            var $r3 = $('#<%= R3.ClientID %>');
+            var $r4 = $('#<%= R4.ClientID %>');
+            if ($c1.prop("checked") || $c2.prop("checked") || $c3.prop("checked") || $c4.prop("checked") || $r1.prop("checked") || $r2.prop("checked") || $r3.prop("checked") || $r4.prop("checked")) {
+                arguments.IsValid = true;
+            } else {
+                arguments.IsValid = false;
+            }
+        }
+</script> 
+    
+  
 
     <div class="jumbotron">
         <h2>Velkommen til trafikkskolequiz
@@ -21,26 +58,37 @@
                 &nbsp;&nbsp;&nbsp;
                 <asp:Label ID="QuestionLabel" runat="server" Font-Bold="True"></asp:Label>
             </p>
+            <%--<asp:CustomValidator id="RadioButtonValidator" runat="server" Display="Dynamic" ForeColor="Red" ErrorMessage="Du må gjøre et valg!" ClientValidationFunction="ClientValidate" OnServerValidate="ServerValidate"></asp:CustomValidator>--%>
+            <asp:CustomValidator id="vCbox"
+                ClientValidationFunction="validateCheckbox" 
+                ErrorMessage="<br/>Du må gjøre et valg." 
+                ForeColor="Red"
+                Display="Static"
+                ValidationGroup="CB"
+                runat="server" Enabled="False"></asp:CustomValidator>
             <br>
             <p>
                 <asp:Label ID="AnswerAlt1" runat="server"></asp:Label>
-                <asp:RadioButton ID="R1" runat="server" GroupName="Quiz" Visible="False"  />
-                <asp:CheckBox ID="C1" runat="server" Visible="False" />
+                <asp:RadioButton ID="R1" ValidationGroup="CB" runat="server" GroupName="Quiz" Visible="False"  />
+                <asp:CheckBox ID="C1" ValidationGroup="CB" runat="server" Visible="False" />
             </p>
             <p>
                 <asp:Label ID="AnswerAlt2" runat="server"></asp:Label>
-                <asp:RadioButton ID="R2" runat="server" GroupName="Quiz" Visible="False" />
-                <asp:CheckBox ID="C2" runat="server" Visible="False" />
+                <asp:RadioButton ID="R2" ValidationGroup="CB" runat="server" GroupName="Quiz" Visible="False" />
+                <asp:CheckBox ID="C2" ValidationGroup="CB" runat="server" Visible="False" />
             </p>
             <p>
                 <asp:Label ID="AnswerAlt3" runat="server"></asp:Label>
-                <asp:RadioButton ID="R3" runat="server" GroupName="Quiz" Visible="False" />
-                <asp:CheckBox ID="C3" runat="server" Visible="False" />
+                <asp:RadioButton ID="R3" ValidationGroup="CB" runat="server" GroupName="Quiz" Visible="False" />
+                <asp:CheckBox ID="C3" ValidationGroup="CB" runat="server" Visible="False" />
             </p>
             <p>
                 <asp:Label ID="AnswerAlt4" runat="server"></asp:Label>
-                <asp:RadioButton ID="R4" runat="server" GroupName="Quiz" Visible="False" />
-                <asp:CheckBox ID="C4" runat="server" Visible="False" />
+                <asp:RadioButton ID="R4" ValidationGroup="CB" runat="server" GroupName="Quiz" Visible="False" />
+                <asp:CheckBox ID="C4" ValidationGroup="CB" runat="server" Visible="False" />
+            </p>
+            <p>
+              
             </p>
             
 
@@ -49,14 +97,15 @@
     </div>
     <div class="row">
         <div class="col-md-5 col-md-offset-1">
-            
                         <p>
-                <asp:Button ID="Button1" runat="server" OnClick="Button1_Click" Text="Start quiz" CssClass=" btn-primary" />
+                            <asp:Button ID="Button1" runat="server" OnClick="Button1_Click" Text="Start quiz" CssClass=" btn-primary" CausesValidation="true" ValidationGroup="CB" /> 
             </p>
             
 
         </div>
         
     </div>
+    
+    
 
 </asp:Content>

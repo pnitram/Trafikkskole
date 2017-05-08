@@ -67,6 +67,15 @@ namespace Trafikkskole {
         protected global::System.Web.UI.WebControls.Label QuestionLabel;
         
         /// <summary>
+        /// vCbox control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CustomValidator vCbox;
+        
+        /// <summary>
         /// AnswerAlt1 control.
         /// </summary>
         /// <remarks>

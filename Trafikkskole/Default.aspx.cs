@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using System.Web.Configuration;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using MySql.Data.MySqlClient;
@@ -24,6 +25,7 @@ namespace Trafikkskole
         protected void Page_Load(object sender, EventArgs e)
         {
             _questionNumber = 0;
+           
 
             if (Session["email"] == null)
             {
@@ -70,6 +72,7 @@ namespace Trafikkskole
                 foreach (QuestionsAndAnswers questionsAndAnswersObject in _questionsAndAnswersList)
                     if (questionsAndAnswersObject.QuestionsId == _questionNumber)
                     {
+
                         QuestionLabel.Text = questionsAndAnswersObject.Question;
                         AnswerAlt1.Text = questionsAndAnswersObject.AnswerAlt1;
                         AnswerAlt2.Text = questionsAndAnswersObject.AnswerAlt2;
@@ -80,14 +83,16 @@ namespace Trafikkskole
         }
 
         //End Page_Load
-
+        
         protected void Button1_Click(object sender, EventArgs e)
         {
+           
             if (_questionsAndAnswersList.Count == 0)
             {
                 Button1.Text = "Kunne ikke hente fra database!";
                 return;
             }
+            
             QuizHeadingLabel.Text = "Spørsmål";
             Button1.Text = "Neste spørsmål";
             QnrLabel.Text = $"{_questionNumber}/{_questionsAndAnswersList.Count}:";
@@ -107,6 +112,7 @@ namespace Trafikkskole
             {
                 foreach (QuestionsAndAnswers questionsAndAnswersObject in _questionsAndAnswersList)
                 {
+                    
                     //To check if radio, checkbox or url
                     if (questionsAndAnswersObject.QuestionsId == _questionNumber)
                     {
@@ -120,6 +126,7 @@ namespace Trafikkskole
                             C2.Visible = true;
                             C3.Visible = true;
                             C4.Visible = true;
+                            
                         }
                         if (questionsAndAnswersObject.MultipleChoice == 0)
                         {
@@ -131,6 +138,8 @@ namespace Trafikkskole
                             C2.Visible = false;
                             C3.Visible = false;
                             C4.Visible = false;
+                            
+                            
                         }
 
                         //Remove or show images
@@ -143,6 +152,7 @@ namespace Trafikkskole
                         if (questionsAndAnswersObject.IsUrl == 0)
                             Image1.Visible = false;
                     }
+
 
                     //Test if answer is correct
                     if (questionsAndAnswersObject.QuestionsId == _questionNumber - 1)
@@ -169,7 +179,9 @@ namespace Trafikkskole
                             Session["score"] = _score;
                             ScoreLabel.Visible = true;
                             ScoreLabel.ForeColor = Color.Green;
-                            ScoreLabel.Text = "Riktig";
+                            ScoreLabel.Text = "Det var riktig";
+
+
                         }
 
                         else if ((R2.Checked || C2.Checked) && questionsAndAnswersObject.IsCorrectAlt2 == 1)
@@ -178,7 +190,8 @@ namespace Trafikkskole
                             Session["score"] = _score;
                             ScoreLabel.Visible = true;
                             ScoreLabel.ForeColor = Color.Green;
-                            ScoreLabel.Text = "Riktig";
+                            ScoreLabel.Text = "Det var riktig";
+
                         }
 
                         else if ((R3.Checked || C3.Checked) && questionsAndAnswersObject.IsCorrectAlt3 == 1)
@@ -187,7 +200,9 @@ namespace Trafikkskole
                             Session["score"] = _score;
                             ScoreLabel.Visible = true;
                             ScoreLabel.ForeColor = Color.Green;
-                            ScoreLabel.Text = "Riktig";
+                            ScoreLabel.Text = "Det var riktig";
+
+
                         }
 
                         else if ((R4.Checked || C4.Checked) && questionsAndAnswersObject.IsCorrectAlt4 == 1)
@@ -197,15 +212,26 @@ namespace Trafikkskole
                             ScoreLabel.Visible = true;
                             ScoreLabel.ForeColor = Color.Green;
                             ScoreLabel.Text = "Det var riktig!";
+
                         }
+
                         else
                         {
                             ScoreLabel.ForeColor = Color.Red;
                             ScoreLabel.Text = "Det var feil!";
                         }
+
                     }
+
+
+
+
                     if (_questionNumber == _questionsAndAnswersList.Count)
+                    {
                         Button1.Text = "Se resultat!";
+                    }
+
+
 
 
                     //Update score in database table
@@ -267,13 +293,11 @@ namespace Trafikkskole
                         R4.Visible = false;
                         QnrLabel.Visible = false;
                         QuestionLabel.Visible = false;
-                        _score = 0;
-                        Session["score"] = _score;
                         Button1.OnClientClick = "window.location.href='Default.aspx'; return false;";
-                        _questionNumber = 1;
-                        Session["questionNumber"] = _questionNumber;
+
                     }
                 }
+                
             }
 
             catch (Exception exception)
@@ -285,18 +309,26 @@ namespace Trafikkskole
             _questionNumber++;
             Session["questionNumber"] = _questionNumber;
 
+
+
+            
+
             //First radio button selected by default 
             C1.Checked = false;
             C2.Checked = false;
             C3.Checked = false;
             C4.Checked = false;
-            R1.Checked = true;
+            R1.Checked = false;
             R2.Checked = false;
             R3.Checked = false;
             R4.Checked = false;
+            vCbox.Enabled = true;
+
+
+
         }
 
-        //Userlist to hyml
+        //Userlist to html
         private void AdminHtmlList()
         {
             Label1.Visible = false;
@@ -480,5 +512,16 @@ namespace Trafikkskole
                 Console.WriteLine("Failed to get users!");
             }
         }
+//                protected void ServerValidate(object source, ServerValidateEventArgs args)
+//                {
+//                    if (_questionNumber > 2)
+//                    {
+//                       
+//                            args.IsValid = R1.Checked || R2.Checked || R3.Checked || R4.Checked;
+//                    }
+//                    
+//                }
+
+
     }
 }
