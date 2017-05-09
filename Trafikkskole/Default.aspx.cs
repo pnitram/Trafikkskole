@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using System.Web.Configuration;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using MySql.Data.MySqlClient;
@@ -13,17 +14,17 @@ namespace Trafikkskole
         private string _myconnectionstring;
         private int _numRows;
         private int _questionNumber;
-
-        private QuestionsAndAnswers _questionsAndAnswers = new QuestionsAndAnswers();
-        private List<QuestionsAndAnswers> _questionsAndAnswersList = new List<QuestionsAndAnswers>();
         private int _score;
         private string _sql;
+        private List<WrongAnswers> _wrongAnswersList = new List<WrongAnswers>();
+        private List<QuestionsAndAnswers> _questionsAndAnswersList = new List<QuestionsAndAnswers>();
         private readonly List<Users> _userList = new List<Users>();
 
         //Start Page_Load
         protected void Page_Load(object sender, EventArgs e)
         {
             _questionNumber = 0;
+           
 
             if (Session["email"] == null)
             {
@@ -40,14 +41,16 @@ namespace Trafikkskole
             {
                 if (!Page.IsPostBack)
                 {
+
                     _questionsAndAnswersList.Clear();
                     QuestionsFromDatabaseToList();
                     QuizHeadingLabel.Text =
                         $"Denne trafikkquizen inneholder {_questionsAndAnswersList.Count} spørsmål. <br> Masse lykke til!";
                     _questionNumber = 1;
                     Session["questionNumber"] = _questionNumber;
-                    _score = 0;
+                    _score = 1;
                     Session["score"] = _score;
+                    Session["wrongAnswerList"] = _wrongAnswersList;
                     QuestionLabel.Visible = false;
                     AnswerAlt1.Visible = false;
                     AnswerAlt2.Visible = false;
@@ -64,12 +67,14 @@ namespace Trafikkskole
                 Label1.Text = Session["firstName"].ToString();
                 _questionNumber = (int) Session["questionNumber"];
                 _score = (int) Session["score"];
+                _wrongAnswersList = (List<WrongAnswers>) Session["wrongAnswerList"];
 
 
                 //Gets Q and A
                 foreach (QuestionsAndAnswers questionsAndAnswersObject in _questionsAndAnswersList)
                     if (questionsAndAnswersObject.QuestionsId == _questionNumber)
                     {
+
                         QuestionLabel.Text = questionsAndAnswersObject.Question;
                         AnswerAlt1.Text = questionsAndAnswersObject.AnswerAlt1;
                         AnswerAlt2.Text = questionsAndAnswersObject.AnswerAlt2;
@@ -80,14 +85,16 @@ namespace Trafikkskole
         }
 
         //End Page_Load
-
+        
         protected void Button1_Click(object sender, EventArgs e)
         {
+           
             if (_questionsAndAnswersList.Count == 0)
             {
                 Button1.Text = "Kunne ikke hente fra database!";
                 return;
             }
+            
             QuizHeadingLabel.Text = "Spørsmål";
             Button1.Text = "Neste spørsmål";
             QnrLabel.Text = $"{_questionNumber}/{_questionsAndAnswersList.Count}:";
@@ -107,6 +114,7 @@ namespace Trafikkskole
             {
                 foreach (QuestionsAndAnswers questionsAndAnswersObject in _questionsAndAnswersList)
                 {
+                    
                     //To check if radio, checkbox or url
                     if (questionsAndAnswersObject.QuestionsId == _questionNumber)
                     {
@@ -120,6 +128,7 @@ namespace Trafikkskole
                             C2.Visible = true;
                             C3.Visible = true;
                             C4.Visible = true;
+                            
                         }
                         if (questionsAndAnswersObject.MultipleChoice == 0)
                         {
@@ -131,6 +140,8 @@ namespace Trafikkskole
                             C2.Visible = false;
                             C3.Visible = false;
                             C4.Visible = false;
+                            
+                            
                         }
 
                         //Remove or show images
@@ -143,6 +154,7 @@ namespace Trafikkskole
                         if (questionsAndAnswersObject.IsUrl == 0)
                             Image1.Visible = false;
                     }
+
 
                     //Test if answer is correct
                     if (questionsAndAnswersObject.QuestionsId == _questionNumber - 1)
@@ -167,46 +179,137 @@ namespace Trafikkskole
                         {
                             _score++;
                             Session["score"] = _score;
-                            ScoreLabel.Visible = true;
-                            ScoreLabel.ForeColor = Color.Green;
-                            ScoreLabel.Text = "Riktig";
                         }
 
                         else if ((R2.Checked || C2.Checked) && questionsAndAnswersObject.IsCorrectAlt2 == 1)
                         {
                             _score++;
                             Session["score"] = _score;
-                            ScoreLabel.Visible = true;
-                            ScoreLabel.ForeColor = Color.Green;
-                            ScoreLabel.Text = "Riktig";
                         }
 
                         else if ((R3.Checked || C3.Checked) && questionsAndAnswersObject.IsCorrectAlt3 == 1)
                         {
                             _score++;
                             Session["score"] = _score;
-                            ScoreLabel.Visible = true;
-                            ScoreLabel.ForeColor = Color.Green;
-                            ScoreLabel.Text = "Riktig";
                         }
 
                         else if ((R4.Checked || C4.Checked) && questionsAndAnswersObject.IsCorrectAlt4 == 1)
                         {
                             _score++;
                             Session["score"] = _score;
-                            ScoreLabel.Visible = true;
-                            ScoreLabel.ForeColor = Color.Green;
-                            ScoreLabel.Text = "Det var riktig!";
                         }
+
                         else
                         {
-                            ScoreLabel.ForeColor = Color.Red;
-                            ScoreLabel.Text = "Det var feil!";
-                        }
-                    }
-                    if (_questionNumber == _questionsAndAnswersList.Count)
-                        Button1.Text = "Se resultat!";
 
+                            //Wronganswer + correct answer to list
+                            WrongAnswers wrongAnswerRow = new WrongAnswers();
+                            wrongAnswerRow.Question = questionsAndAnswersObject.Question;
+
+                            if (questionsAndAnswersObject.MultipleChoice == 0)
+                            {
+                                if (R1.Checked || C1.Checked)
+                                {
+                                    wrongAnswerRow.YourAnswer = questionsAndAnswersObject.AnswerAlt1;
+                                }
+                                else if (R2.Checked || C2.Checked)
+                                {
+                                    wrongAnswerRow.YourAnswer = questionsAndAnswersObject.AnswerAlt2;
+                                }
+                                else if (R3.Checked || C3.Checked)
+                                {
+                                    wrongAnswerRow.YourAnswer = questionsAndAnswersObject.AnswerAlt3;
+                                }
+                                else if (R4.Checked || C4.Checked)
+                                {
+                                    wrongAnswerRow.YourAnswer = questionsAndAnswersObject.AnswerAlt4;
+                                }
+
+                                if (questionsAndAnswersObject.IsCorrectAlt1 == 1)
+                                {
+                                    wrongAnswerRow.CorrectAnswer = questionsAndAnswersObject.AnswerAlt1;
+                                }
+
+                                else if (questionsAndAnswersObject.IsCorrectAlt2 == 1)
+                                {
+                                    wrongAnswerRow.CorrectAnswer = questionsAndAnswersObject.AnswerAlt2;
+                                }
+
+                                else if (questionsAndAnswersObject.IsCorrectAlt3 == 1)
+                                {
+                                    wrongAnswerRow.CorrectAnswer = questionsAndAnswersObject.AnswerAlt3;
+                                }
+
+                                else if (questionsAndAnswersObject.IsCorrectAlt4 == 1)
+                                {
+                                    wrongAnswerRow.CorrectAnswer = questionsAndAnswersObject.AnswerAlt4;
+                                }
+                            }
+                           
+                            //Max 2 correct answers
+                            if (questionsAndAnswersObject.MultipleChoice == 1)
+                            {
+                                wrongAnswerRow.YourAnswer = "";
+
+                                if (C1.Checked)
+                                {
+                                    wrongAnswerRow.YourAnswer = " Svar: " + wrongAnswerRow.YourAnswer + questionsAndAnswersObject.AnswerAlt1 + ".\n";
+                                }
+                                if (C2.Checked)
+                                {
+                                    wrongAnswerRow.YourAnswer = " Svar: " + wrongAnswerRow.YourAnswer + questionsAndAnswersObject.AnswerAlt2 + ".\n";
+                                }
+                                if (C3.Checked)
+                                {
+                                    wrongAnswerRow.YourAnswer = " Svar: " + wrongAnswerRow.YourAnswer + questionsAndAnswersObject.AnswerAlt3 + ".\n";
+                                }
+                                if (C4.Checked)
+                                {
+                                    wrongAnswerRow.YourAnswer = " Svar: " + wrongAnswerRow.YourAnswer + questionsAndAnswersObject.AnswerAlt4 + ".\n";
+                                }
+                                
+
+                                //Correct answer text
+
+                                if (questionsAndAnswersObject.IsCorrectAlt1 == 1 && questionsAndAnswersObject.IsCorrectAlt2 == 1)
+                                {
+                                    wrongAnswerRow.CorrectAnswer = questionsAndAnswersObject.AnswerAlt1 + " OG " + questionsAndAnswersObject.AnswerAlt2;
+                                }
+
+                                else if (questionsAndAnswersObject.IsCorrectAlt1 == 1 && questionsAndAnswersObject.IsCorrectAlt3 == 1)
+                                {
+                                    wrongAnswerRow.CorrectAnswer = questionsAndAnswersObject.AnswerAlt1 + " OG " + questionsAndAnswersObject.AnswerAlt3;
+                                }
+
+                                else if (questionsAndAnswersObject.IsCorrectAlt1 == 1 && questionsAndAnswersObject.IsCorrectAlt4 == 1)
+                                {
+                                    wrongAnswerRow.CorrectAnswer = questionsAndAnswersObject.AnswerAlt1 + " OG " + questionsAndAnswersObject.AnswerAlt4;
+                                }
+
+                                else if (questionsAndAnswersObject.IsCorrectAlt2 == 1 && questionsAndAnswersObject.IsCorrectAlt3 == 1)
+                                {
+                                    wrongAnswerRow.CorrectAnswer = questionsAndAnswersObject.AnswerAlt2 + " OG " + questionsAndAnswersObject.AnswerAlt3;
+                                }
+                                else if (questionsAndAnswersObject.IsCorrectAlt2 == 1 && questionsAndAnswersObject.IsCorrectAlt4 == 1)
+                                {
+                                    wrongAnswerRow.CorrectAnswer = questionsAndAnswersObject.AnswerAlt2 + " OG " + questionsAndAnswersObject.AnswerAlt4;
+                                }
+                                else if (questionsAndAnswersObject.IsCorrectAlt3 == 1 && questionsAndAnswersObject.IsCorrectAlt4 == 1)
+                                {
+                                    wrongAnswerRow.CorrectAnswer = questionsAndAnswersObject.AnswerAlt3 + " OG " + questionsAndAnswersObject.AnswerAlt4;
+                                }
+                            }
+                            
+                            _wrongAnswersList.Add(wrongAnswerRow);
+                            Session["wrongAnswerList"] = _wrongAnswersList;
+                        }
+
+                    }
+
+                    if (_questionNumber == _questionsAndAnswersList.Count)
+                    {
+                        Button1.Text = "Se resultat!";
+                    }
 
                     //Update score in database table
                     if (_questionNumber > _questionsAndAnswersList.Count)
@@ -255,8 +358,6 @@ namespace Trafikkskole
                             Console.WriteLine("Kunne ikke registrere poengsum");
                         }
 
-                        Button1.Text = "Ikke fornøyd? Prøv igjen!";
-                        QuizHeadingLabel.Text = $"Du oppnådde {_score} poeng!";
                         AnswerAlt1.Visible = false;
                         AnswerAlt2.Visible = false;
                         AnswerAlt3.Visible = false;
@@ -265,14 +366,16 @@ namespace Trafikkskole
                         R2.Visible = false;
                         R3.Visible = false;
                         R4.Visible = false;
+                        C1.Visible = false;
+                        C2.Visible = false;
+                        C3.Visible = false;
+                        C4.Visible = false;
                         QnrLabel.Visible = false;
                         QuestionLabel.Visible = false;
-                        _score = 0;
-                        Session["score"] = _score;
-                        Button1.OnClientClick = "window.location.href='Default.aspx'; return false;";
-                        _questionNumber = 1;
-                        Session["questionNumber"] = _questionNumber;
+                        WrongAnswersHtml();
+                        break;
                     }
+
                 }
             }
 
@@ -290,13 +393,15 @@ namespace Trafikkskole
             C2.Checked = false;
             C3.Checked = false;
             C4.Checked = false;
-            R1.Checked = true;
+            R1.Checked = false;
             R2.Checked = false;
             R3.Checked = false;
             R4.Checked = false;
+            vCbox.Enabled = true;
+
         }
 
-        //Userlist to hyml
+        //Userlist to html
         private void AdminHtmlList()
         {
             Label1.Visible = false;
@@ -307,7 +412,7 @@ namespace Trafikkskole
 
 
             html.Append("<div class='row'>");
-            html.Append("<div class='col-md-offset-1 col-md-10'>");
+            html.Append("<div class='col-md-5 col-md-offset-1'>");
             html.Append("<div class='container'>");
             html.Append("<h2>Oversikt over brukere og poengsummen deres</h2>");
             html.Append("<table class='table'>");
@@ -371,6 +476,59 @@ namespace Trafikkskole
             PlaceHolder1.Controls.Add(new Literal {Text = html.ToString()});
         }
 
+        private void WrongAnswersHtml()
+        {
+            Label1.Visible = false;
+            QuizHeadingLabel.Visible = false;
+            Button1.Visible = true;
+            PlaceHolder1.Visible = true;
+            StringBuilder html = new StringBuilder();
+
+                html.Append("<div class='row'>");
+                html.Append("<div class='col-md-offset-1 col-md-10'>");
+                html.Append("<div class='container'>");
+                html.Append($"<h2>Du fikk {_score} av {_questionsAndAnswersList.Count}</h2>");
+                html.Append("<h3>Dette svarte du feil på:</h2>");
+                html.Append("<table class='table'>");
+                html.Append("<thead>");
+                html.Append("<tr>");
+                html.Append("<th>");
+                html.Append("Spørsmål:");
+                html.Append("</th>");
+                html.Append("<th>");
+                html.Append("Du svarte:");
+                html.Append("</th>");
+                html.Append("<th>");
+                html.Append("Korrekt svar er:");
+                html.Append("</th>");
+                html.Append("</tr>");
+                html.Append("</thead>");
+
+
+                foreach (WrongAnswers wa in _wrongAnswersList)
+                {
+                    html.Append("<tr>");
+                    html.Append("<td>");
+                    html.Append(wa.Question);
+                    html.Append("</td>");
+                    html.Append("<td>");
+                    html.Append(wa.YourAnswer);
+                    html.Append("</td>");
+                    html.Append("<td>");
+                    html.Append(wa.CorrectAnswer);
+                    html.Append("</td>");
+                    html.Append("</tr>");
+                }
+
+                html.Append("</div>");
+                html.Append("</div>");
+                html.Append("</table>");
+                PlaceHolder1.Controls.Add(new Literal { Text = html.ToString() });
+                Button1.Text = "Ikke fornøyd? Prøv igjen!";
+                Button1.OnClientClick = "window.location.href='Default.aspx'; return false;";
+            }
+        
+
         //Method to fill list with questions and answers objects from database
         private void QuestionsFromDatabaseToList()
         {
@@ -426,7 +584,7 @@ namespace Trafikkskole
             {
                 QuestionLabel.Text = "Failed to get questions!";
                 Label1.Text = "Failed to get questions!";
-                Console.WriteLine("Failed to get questions!");
+                Console.WriteLine($"Failed to get questions!  Exception: {exception}");
             }
         }
 
@@ -475,10 +633,11 @@ namespace Trafikkskole
             }
             catch (Exception exception)
             {
-                QuestionLabel.Text = "Failed to get users!";
+                QuestionLabel.Text = $"Failed to get users!";
                 Label1.Text = "Failed to get users!";
-                Console.WriteLine("Failed to get users!");
+                Console.WriteLine($"Failed to get users!  Exception: {exception}");
             }
         }
+
     }
 }
