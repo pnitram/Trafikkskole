@@ -175,29 +175,70 @@ namespace Trafikkskole
                             R4.Checked = false;
                         }
 
-                        if ((R1.Checked || C1.Checked) && questionsAndAnswersObject.IsCorrectAlt1 == 1)
+                        //Test singlechoice
+                        if (R1.Checked && questionsAndAnswersObject.IsCorrectAlt1 == 1 && questionsAndAnswersObject.MultipleChoice == 0)
                         {
                             _score++;
                             Session["score"] = _score;
                         }
 
-                        else if ((R2.Checked || C2.Checked) && questionsAndAnswersObject.IsCorrectAlt2 == 1)
+                        else if (R2.Checked && questionsAndAnswersObject.IsCorrectAlt2 == 1 && questionsAndAnswersObject.MultipleChoice == 0)
                         {
                             _score++;
                             Session["score"] = _score;
                         }
 
-                        else if ((R3.Checked || C3.Checked) && questionsAndAnswersObject.IsCorrectAlt3 == 1)
+                        else if (R3.Checked && questionsAndAnswersObject.IsCorrectAlt3 == 1 && questionsAndAnswersObject.MultipleChoice == 0)
                         {
                             _score++;
                             Session["score"] = _score;
                         }
 
-                        else if ((R4.Checked || C4.Checked) && questionsAndAnswersObject.IsCorrectAlt4 == 1)
+                        else if (R4.Checked && questionsAndAnswersObject.IsCorrectAlt4 == 1 && questionsAndAnswersObject.MultipleChoice == 0)
                         {
                             _score++;
                             Session["score"] = _score;
                         }
+
+                        //Test multiplechoice (only combination of 2 checkboxes)
+
+                        else if (C1.Checked && C2.Checked && !C3.Checked && ! C4.Checked && questionsAndAnswersObject.IsCorrectAlt1 == 1 && questionsAndAnswersObject.IsCorrectAlt2 == 1 && questionsAndAnswersObject.IsCorrectAlt3 == 0 && questionsAndAnswersObject.IsCorrectAlt4 == 0 && questionsAndAnswersObject.MultipleChoice == 1)
+                        {
+                            _score++;
+                            Session["score"] = _score;
+                        }
+
+                        else if (C1.Checked && C3.Checked && !C2.Checked && !C4.Checked && questionsAndAnswersObject.IsCorrectAlt1 == 1 && questionsAndAnswersObject.IsCorrectAlt3 == 1 && questionsAndAnswersObject.IsCorrectAlt2 == 0 && questionsAndAnswersObject.IsCorrectAlt4 == 0 && questionsAndAnswersObject.MultipleChoice == 1)
+                        {
+                            _score++;
+                            Session["score"] = _score;
+                        }
+
+                        else if (C1.Checked && C4.Checked && !C2.Checked && !C3.Checked && questionsAndAnswersObject.IsCorrectAlt1 == 1 && questionsAndAnswersObject.IsCorrectAlt4 == 1 && questionsAndAnswersObject.IsCorrectAlt2 == 0 && questionsAndAnswersObject.IsCorrectAlt3 == 0 && questionsAndAnswersObject.MultipleChoice == 1)
+                        {
+                            _score++;
+                            Session["score"] = _score;
+                        }
+
+                        else if (C2.Checked && C3.Checked && !C1.Checked && !C4.Checked && questionsAndAnswersObject.IsCorrectAlt2 == 1 && questionsAndAnswersObject.IsCorrectAlt3 == 1 && questionsAndAnswersObject.IsCorrectAlt1 == 0 && questionsAndAnswersObject.IsCorrectAlt4 == 0 && questionsAndAnswersObject.MultipleChoice == 1)
+                        {
+                            _score++;
+                            Session["score"] = _score;
+                        }
+
+                        else if (C2.Checked && C4.Checked && !C1.Checked && !C3.Checked && questionsAndAnswersObject.IsCorrectAlt2 == 1 && questionsAndAnswersObject.IsCorrectAlt4 == 1 && questionsAndAnswersObject.IsCorrectAlt1 == 0 && questionsAndAnswersObject.IsCorrectAlt3 == 0 && questionsAndAnswersObject.MultipleChoice == 1)
+                        {
+                            _score++;
+                            Session["score"] = _score;
+                        }
+
+                        else if (C3.Checked && C4.Checked && !C1.Checked && !C2.Checked && questionsAndAnswersObject.IsCorrectAlt3 == 1 && questionsAndAnswersObject.IsCorrectAlt4 == 1 && questionsAndAnswersObject.IsCorrectAlt1 == 0 && questionsAndAnswersObject.IsCorrectAlt2 == 0 && questionsAndAnswersObject.MultipleChoice == 1)
+                        {
+                            _score++;
+                            Session["score"] = _score;
+                        }
+
+
 
                         else
                         {
@@ -249,25 +290,72 @@ namespace Trafikkskole
                             //Max 2 correct answers
                             if (questionsAndAnswersObject.MultipleChoice == 1)
                             {
-                                wrongAnswerRow.YourAnswer = "";
-
+                                
                                 if (C1.Checked)
                                 {
-                                    wrongAnswerRow.YourAnswer = " Svar: " + wrongAnswerRow.YourAnswer + questionsAndAnswersObject.AnswerAlt1 + ".\n";
+                                    wrongAnswerRow.YourAnswer = questionsAndAnswersObject.AnswerAlt1;
                                 }
                                 if (C2.Checked)
                                 {
-                                    wrongAnswerRow.YourAnswer = " Svar: " + wrongAnswerRow.YourAnswer + questionsAndAnswersObject.AnswerAlt2 + ".\n";
+                                    wrongAnswerRow.YourAnswer = questionsAndAnswersObject.AnswerAlt2;
                                 }
                                 if (C3.Checked)
                                 {
-                                    wrongAnswerRow.YourAnswer = " Svar: " + wrongAnswerRow.YourAnswer + questionsAndAnswersObject.AnswerAlt3 + ".\n";
+                                    wrongAnswerRow.YourAnswer = questionsAndAnswersObject.AnswerAlt3;
                                 }
                                 if (C4.Checked)
                                 {
-                                    wrongAnswerRow.YourAnswer = " Svar: " + wrongAnswerRow.YourAnswer + questionsAndAnswersObject.AnswerAlt4 + ".\n";
+                                    wrongAnswerRow.YourAnswer = questionsAndAnswersObject.AnswerAlt4;
                                 }
-                                
+
+                                if (C1.Checked && C2.Checked)
+                                {
+                                    wrongAnswerRow.YourAnswer = questionsAndAnswersObject.AnswerAlt1 + " OG " + questionsAndAnswersObject.AnswerAlt2;
+                                }
+                                if (C1.Checked && C3.Checked)
+                                {
+                                    wrongAnswerRow.YourAnswer = questionsAndAnswersObject.AnswerAlt1 + " OG " + questionsAndAnswersObject.AnswerAlt3;
+                                }
+                                if (C1.Checked && C4.Checked)
+                                {
+                                    wrongAnswerRow.YourAnswer = questionsAndAnswersObject.AnswerAlt1 + " OG " + questionsAndAnswersObject.AnswerAlt4;
+                                }
+                                if (C2.Checked && C3.Checked)
+                                {
+                                    wrongAnswerRow.YourAnswer = questionsAndAnswersObject.AnswerAlt2 + " OG " + questionsAndAnswersObject.AnswerAlt3;
+                                }
+
+                                if (C2.Checked && C4.Checked)
+                                {
+                                    wrongAnswerRow.YourAnswer = questionsAndAnswersObject.AnswerAlt2 + " OG " + questionsAndAnswersObject.AnswerAlt4;
+                                }
+
+                                if (C3.Checked && C4.Checked)
+                                {
+                                    wrongAnswerRow.YourAnswer = questionsAndAnswersObject.AnswerAlt3 + " OG " + questionsAndAnswersObject.AnswerAlt4;
+                                }
+
+                                if (C1.Checked && C2.Checked && C3.Checked)
+                                {
+                                    wrongAnswerRow.YourAnswer = questionsAndAnswersObject.AnswerAlt1 + ", " + questionsAndAnswersObject.AnswerAlt2 + " OG " + questionsAndAnswersObject.AnswerAlt3;
+                                }
+
+                                if (C1.Checked && C3.Checked && C4.Checked)
+                                {
+                                    wrongAnswerRow.YourAnswer = questionsAndAnswersObject.AnswerAlt1 + ", " + questionsAndAnswersObject.AnswerAlt3 + " OG " + questionsAndAnswersObject.AnswerAlt4;
+                                }
+
+                                if (C2.Checked && C3.Checked && C4.Checked)
+                                {
+                                    wrongAnswerRow.YourAnswer = questionsAndAnswersObject.AnswerAlt2 + ", " + questionsAndAnswersObject.AnswerAlt3 + " OG " + questionsAndAnswersObject.AnswerAlt4;
+                                }
+
+                                if (C1.Checked && C2.Checked && C3.Checked && C4.Checked)
+                                {
+                                    wrongAnswerRow.YourAnswer = questionsAndAnswersObject.AnswerAlt1 + ", " + questionsAndAnswersObject.AnswerAlt2 + ", " + questionsAndAnswersObject.AnswerAlt3 + " OG " + questionsAndAnswersObject.AnswerAlt4;
+                                }
+
+
 
                                 //Correct answer text
 
@@ -404,7 +492,6 @@ namespace Trafikkskole
         //Userlist to html
         private void AdminHtmlList()
         {
-            Label1.Visible = false;
             QuizHeadingLabel.Visible = false;
             Button1.Visible = false;
             PlaceHolder1.Visible = true;
@@ -478,7 +565,6 @@ namespace Trafikkskole
 
         private void WrongAnswersHtml()
         {
-            Label1.Visible = false;
             QuizHeadingLabel.Visible = false;
             Button1.Visible = true;
             PlaceHolder1.Visible = true;
