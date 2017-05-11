@@ -30,12 +30,15 @@
             <asp:Label ID="ScoreLabel" runat="server" CssClass="alert" Font-Size="Smaller"></asp:Label>
         </h2>
         </div>
-    <asp:PlaceHolder ID="PlaceHolder1" runat="server" Visible="False"></asp:PlaceHolder>
+    
+    
     <div class="row">
         <div class="col-md-5 col-md-offset-1">
             <h2>
                 <asp:Label ID="QuizHeadingLabel" runat="server" CssClass="h4" ForeColor="Black"></asp:Label>
             </h2>
+            
+            <asp:PlaceHolder ID="PlaceHolder1" runat="server" Visible="False"></asp:PlaceHolder>
 
             <p>
                 <asp:Label ID="QnrLabel" runat="server"></asp:Label>
@@ -78,7 +81,7 @@
             
 
         </div>
-        <div class="col-md-6"> <p><asp:Image ID="Image1" runat="server" Visible="False" Height="300px" /></p> </div>
+        <div class="col-md-6"> <p><asp:Image ID="Image1" runat="server" Visible="False" Width="300px" /></p> </div>
     </div>
     <div class="row">
         <div class="col-md-5 col-md-offset-1">
