@@ -24,6 +24,10 @@
                         </p>
                     
                 </div>
+                
+                <div>
+                    <p>Dette er en skoleoppgave laget i ASP.NET som student ved Høgskolen i Sørøst-Norge.<br/> Kildekoden til nettsiden finner du på min <a href="https://github.com/pnitram/Trafikkskole/">GitHub side.</a></p>
+                </div>
 
 
             </div>

@@ -89,7 +89,7 @@
             </asp:ContentPlaceHolder>
             <hr />
             <footer>
-                <p>&copy; <%: DateTime.Now.Year %> - Martin's Trafikkskole</p>
+                <p>&copy; <%: DateTime.Now.Year %> - Martin Pedersen</p>
             </footer>
         </div>
 
